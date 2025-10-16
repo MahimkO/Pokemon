@@ -1,3 +1,3 @@
 export default function Loader() {
-  return <>LOADING ...</>;
+  return <>Тут могла бы быть ваша реклама ...</>;
 }
