@@ -1,18 +1,16 @@
 import { memo } from 'react';
-import { useUsers } from '../../hooks/useUsers';
-import type { TUser } from '../../api/pokemons';
+import { usePokemons } from '../../hooks/usePokemons';
+import type { TPokemon } from '../../api/pokemons';
 
 const Main = () => {
-  const { data, isError, error } = useUsers();
+  const { data: pokemons, isError, error } = usePokemons();
 
   if (isError) return <p>Ошибка: {error.message}</p>;
 
   return (
     <ul>
-      {data?.map((user: TUser) => (
-        <li key={user.id}>
-          {user.name} {user.email && `(${user.email})`}
-        </li>
+      {pokemons?.map((pokemon: TPokemon) => (
+        <li key={pokemon.id}>{pokemon.name}</li>
       ))}
     </ul>
   );
