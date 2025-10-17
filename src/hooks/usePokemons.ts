@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchPokemons } from '../api/pokemons';
-import type { TPokemon } from '../api/pokemons';
+import type { TPokemons } from '../api/pokemons';
 
 export const usePokemons = () => {
-  return useQuery<TPokemon[], Error>({
-    queryKey: ['users'],
+  return useQuery<TPokemons, Error>({
+    queryKey: ['pokemons'],
     queryFn: fetchPokemons,
   });
 };

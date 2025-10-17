@@ -1,16 +1,19 @@
 import { memo } from 'react';
 import { usePokemons } from '../../hooks/usePokemons';
-import type { TPokemon } from '../../api/pokemons';
+import type { TPokemonShortInfo } from '../../api/pokemons';
 
 const Main = () => {
-  const { data: pokemons, isError, error } = usePokemons();
+  const { data: pokemons, isLoading, isError, error } = usePokemons();
 
+  if (isLoading) return <p>Загрузка ...</p>;
   if (isError) return <p>Ошибка: {error.message}</p>;
 
   return (
     <ul>
-      {pokemons?.map((pokemon: TPokemon) => (
-        <li key={pokemon.id}>{pokemon.name}</li>
+      {pokemons?.results?.map((pokemon: TPokemonShortInfo) => (
+        <li key={pokemon.name}>
+          {pokemon.name} - {pokemon.url}
+        </li>
       ))}
     </ul>
   );

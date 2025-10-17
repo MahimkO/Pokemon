@@ -23,6 +23,29 @@ export default defineConfig([
     },
     rules: {
       quotes: ['warn', 'single', { avoidEscape: true }], // Одинарные кавычки
+      // Сортировка самих импортов между файлами (по алфавиту)
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            ['parent', 'sibling', 'index'],
+          ],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
+        },
+      ],
+
+      // Сортировка имен внутри фигурных скобок { ... }
+      'sort-imports': [
+        'error',
+        {
+          ignoreDeclarationSort: true, // не конфликтуем с import/order
+          ignoreMemberSort: false, // сортируем члены внутри {}
+        },
+      ],
     },
   },
 ]);

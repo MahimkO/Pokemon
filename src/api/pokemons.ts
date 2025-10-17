@@ -1,16 +1,9 @@
 import { api } from './client';
-
-export type TPokemon = {
-  id: number;
-  name: string;
-  height: number;
-  weight: number;
-  base_experience: number;
-};
+import type { TPokemon, TPokemons } from './types';
 
 // GET-запрос
-export const fetchPokemons = async (): Promise<TPokemon[]> => {
-  const { data } = await api.get<TPokemon[]>('/pokemons');
+export const fetchPokemons = async (): Promise<TPokemons> => {
+  const { data } = await api.get<TPokemons>(`/pokemon/?limit=100`);
 
   return data;
 };
