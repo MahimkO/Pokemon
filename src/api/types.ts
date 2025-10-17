@@ -1,9 +1,9 @@
 export type TPokemon = {
+  base_experience: number;
+  height: number;
   id: number;
   name: string;
-  height: number;
   weight: number;
-  base_experience: number;
 };
 
 export type TPokemonShortInfo = {

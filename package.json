@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "lint-fix": "eslint --fix",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -26,9 +27,12 @@
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.4",
     "eslint": "^9.36.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-perfectionist": "^4.15.1",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.22",
     "globals": "^16.4.0",
+    "prettier-plugin-organize-imports": "^4.3.0",
     "sass-embedded": "^1.93.2",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.45.0",

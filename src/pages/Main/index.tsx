@@ -1,9 +1,10 @@
 import { memo } from 'react';
-import { usePokemons } from '../../hooks/usePokemons';
+
 import type { TPokemonShortInfo } from '../../api/pokemons';
+import { usePokemons } from '../../hooks/usePokemons';
 
 const Main = () => {
-  const { data: pokemons, isLoading, isError, error } = usePokemons();
+  const { data: pokemons, error, isError, isLoading } = usePokemons();
 
   if (isLoading) return <p>Загрузка ...</p>;
   if (isError) return <p>Ошибка: {error.message}</p>;

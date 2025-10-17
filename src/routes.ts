@@ -2,17 +2,21 @@ import { lazy } from 'react';
 
 export const routes = [
   // Main page
-  { path: '/', element: lazy(() => import('./pages/Main')) },
+  { element: lazy(() => import('./pages/Main')), path: '/' },
 
   // Pokemon
   {
-    path: '/pokemons/:id',
+    element: lazy(() => import('./pages/Pokemons')),
+    path: '/pokemons',
+  },
+  {
     element: lazy(() => import('./pages/Pokemons/Pokemon')),
+    path: '/pokemons/:id',
   },
 
   // About
   {
-    path: '/about',
     element: lazy(() => import('./pages/About')),
+    path: '/about',
   },
 ];

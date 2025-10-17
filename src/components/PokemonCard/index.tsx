@@ -1,17 +1,20 @@
 import { ArrowLeftOutlined, ArrowRightOutlined, EllipsisOutlined } from '@ant-design/icons';
 import { Button, Popover } from 'antd';
 import { memo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import { AntdCard } from '../../../components/AntdCard';
-import { usePokemon } from '../../../hooks/usePokemon';
+import { usePokemon } from '../../hooks/usePokemon';
+import { AntdCard } from '../AntdCard';
 
 import type { FC } from 'react';
 
+type TProps = {
+  id: number;
+};
+
 const popoverText = <p>Нажмите, если хотите получить больше информации о покемоне</p>;
 
-const Pokemon: FC = () => {
-  const { id } = useParams<{ id: string }>();
+const PokemonCard: FC<TProps> = ({ id }) => {
   const { data: pokemon, error, isError } = usePokemon(+id!);
   const navigate = useNavigate();
 
@@ -57,4 +60,4 @@ const Pokemon: FC = () => {
   );
 };
 
-export default memo(Pokemon);
+export default memo(PokemonCard);
