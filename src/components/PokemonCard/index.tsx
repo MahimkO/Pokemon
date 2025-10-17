@@ -1,45 +1,23 @@
-import { ArrowLeftOutlined, ArrowRightOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { EllipsisOutlined } from '@ant-design/icons';
 import { Button, Popover } from 'antd';
 import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { usePokemon } from '../../hooks/usePokemon';
 import { AntdCard } from '../AntdCard';
 
-import type { FC } from 'react';
+import type { FC, ReactNode } from 'react';
+import type { TPokemon } from '../../api/types';
 
-type TProps = {
-  id: number;
-};
+type TProps = { pokemon: TPokemon; buttons?: ReactNode[] };
 
 const popoverText = <p>Нажмите, если хотите получить больше информации о покемоне</p>;
 
-const PokemonCard: FC<TProps> = ({ id }) => {
-  const { data: pokemon, error, isError } = usePokemon(+id!);
+const PokemonCard: FC<TProps> = ({ pokemon, buttons }) => {
   const navigate = useNavigate();
 
-  if (isError) return <p>Ошибка: {error.message}</p>;
-
-  const goToPreviousPage = () => {
-    navigate(`/pokemons/${+id! - 1}`);
-  };
-
-  const goToNextPage = () => {
-    navigate(`/pokemons/${+id! + 1}`);
-  };
-
   const goToDetailedPage = () => {
-    navigate(`/pokemons/${id}/detailed`);
+    navigate(`/pokemons/${pokemon.id}`);
   };
-
-  const buttons = [
-    <Button onClick={goToPreviousPage} icon={<ArrowLeftOutlined />}>
-      Назад
-    </Button>,
-    <Button onClick={goToNextPage} icon={<ArrowRightOutlined />}>
-      Вперёд
-    </Button>,
-  ];
 
   const cardDContent = [`Height: ${pokemon?.height}`, `Weight: ${pokemon?.weight}`, `Exp: ${pokemon?.base_experience}`];
 

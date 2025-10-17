@@ -1,20 +1,29 @@
-import { memo, type FC } from 'react';
+import { Pagination } from 'antd';
+import { memo, useState, type FC } from 'react';
 
 import PokemonCard from '../../components/PokemonCard';
 import { usePokemons } from '../../hooks/usePokemons';
 
 const Pokemons: FC = () => {
-  const { data } = usePokemons();
-
-  console.log(data);
+  const [page, setPage] = useState(1);
+  const limit = 6;
+  const { data } = usePokemons(page, limit);
+  const { count, details } = data ?? { count: 0, details: [] };
 
   return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
-      {data &&
-        data.results.map((pokemon) => {
-          console.log(+pokemon.url.split('/').reverse()[1]);
-          return <PokemonCard key={pokemon.url} id={+pokemon.url.split('/').reverse()[1]} />;
-        })}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
+        {details.length && details.map((pokemon) => <PokemonCard key={pokemon.name} pokemon={pokemon} />)}
+      </div>
+
+      <Pagination
+        current={page}
+        pageSize={limit}
+        total={count} // общее число покемонов
+        onChange={(newPage) => setPage(newPage)}
+        showSizeChanger={false} // чтобы нельзя было менять количество отображаемых элементов
+        style={{ alignSelf: 'center', marginTop: 20 }}
+      />
     </div>
   );
 };
