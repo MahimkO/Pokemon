@@ -1,22 +1,25 @@
 import { lazy } from 'react';
 
 export const routes = [
-  // Main page
+  // Главная
   { element: lazy(() => import('./pages/Main')), path: '/' },
 
-  // Pokemon
+  // Покемоны
   {
     element: lazy(() => import('./pages/Pokemons')),
     path: '/pokemons',
+    breadcrumb: 'Покемоны',
   },
   {
     element: lazy(() => import('./pages/Pokemons/Pokemon')),
     path: '/pokemons/:id',
+    breadcrumb: 'Покемон',
   },
 
-  // About
+  // О проекте
   {
     element: lazy(() => import('./pages/About')),
     path: '/about',
+    breadcrumb: 'О проекте',
   },
 ];

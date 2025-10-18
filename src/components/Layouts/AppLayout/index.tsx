@@ -10,32 +10,18 @@ import {
   SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import { Breadcrumb, Button, Dropdown, Input, Layout, Menu, Modal, Space, theme } from 'antd';
 import type { MenuProps } from 'antd';
+import { Breadcrumb, Button, Dropdown, Input, Layout, Menu, Modal, Space, theme } from 'antd';
+import type { FC, JSX, ReactNode } from 'react';
 import { createElement, useState } from 'react';
-import type { FC, ReactNode } from 'react';
+import { Link, matchRoutes, useLocation, useNavigate } from 'react-router-dom';
+import { routes } from '../../../routes';
 
 type TProps = {
   children: ReactNode;
 };
 
 const { Content, Footer, Header, Sider } = Layout;
-
-// NavBar элементы в виде массива объектов {key: string; label: string}
-const navBarItems: MenuProps['items'] = [
-  {
-    key: 1,
-    label: 'Главная',
-  },
-  {
-    key: 2,
-    label: 'Покемоны',
-  },
-  {
-    key: 3,
-    label: 'О проекте',
-  },
-];
 
 // Sider элементы
 const siderItems: MenuProps['items'] = [UserOutlined, LaptopOutlined, NotificationOutlined].map((icon, index) => {
@@ -90,6 +76,8 @@ export const AppLayout: FC<TProps> = ({ children }) => {
   const {
     token: { borderRadiusLG, colorBgContainer },
   } = theme.useToken();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const showModal = () => {
     setIsOpen(true);
@@ -118,6 +106,61 @@ export const AppLayout: FC<TProps> = ({ children }) => {
     setIsOpen(false);
   };
 
+  // Menu элементы
+  const navBarItems: MenuProps['items'] = [
+    {
+      key: '/',
+      label: 'Главная',
+      onClick: () => navigate('/'),
+    },
+    {
+      key: '/pokemons',
+      label: 'Покемоны',
+      onClick: () => navigate('/pokemons'),
+    },
+    {
+      key: '/about',
+      label: 'О проекте',
+      onClick: () => navigate('/about'),
+    },
+  ];
+
+  // matchRoutes возвращает массив совпавших маршрутов
+  const matches = matchRoutes(routes, location);
+
+  const breadcrumbItems = [
+    // "Главная" всегда первой
+    {
+      title:
+        location.pathname === '/' ? (
+          <HomeOutlined />
+        ) : (
+          <Link to="/">
+            <HomeOutlined />
+          </Link>
+        ),
+    },
+    // остальные крошки из matchRoutes
+    ...(matches
+      ? matches
+          .map((match, index) => {
+            const route = match.route;
+
+            if (!route.breadcrumb) return null; // возвращаем null для фильтрации
+
+            const isLast = index === matches.length - 1;
+            const title: string | JSX.Element = isLast ? (
+              route.breadcrumb
+            ) : (
+              <Link to={match.pathname}>{route.breadcrumb}</Link>
+            );
+
+            return { title };
+          })
+          .filter((item): item is { title: string | JSX.Element } => item !== null)
+      : []),
+  ];
+
   return (
     <>
       <Layout style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -128,11 +171,11 @@ export const AppLayout: FC<TProps> = ({ children }) => {
             display: 'flex',
           }}
         >
-          <img src="./pokemon.png" height="95" style={{ marginRight: '15px' }} />
+          <img src="/images/pokemon.png" width="95" style={{ marginRight: '15px' }} />
           <Menu
             theme="dark"
             mode="horizontal"
-            defaultSelectedKeys={['1']}
+            selectedKeys={[location.pathname]}
             items={navBarItems}
             style={{ backgroundColor: '#b0bddaff', flex: 1, minWidth: 0 }}
           />
@@ -154,11 +197,7 @@ export const AppLayout: FC<TProps> = ({ children }) => {
 
         <Layout style={{ flex: 1, padding: '0 48px' }}>
           <div style={{ width: '100%' }}>
-            <Breadcrumb
-              separator=">"
-              items={[{ title: <HomeOutlined /> }, { title: <a href="">Pokemons</a> }, { title: 'Pokemon' }]}
-              style={{ margin: '16px 0' }}
-            />
+            <Breadcrumb separator=">" items={breadcrumbItems} style={{ margin: '16px 0' }} />
           </div>
 
           <Layout
@@ -181,7 +220,6 @@ export const AppLayout: FC<TProps> = ({ children }) => {
 
             <Content
               style={{
-                //   background: '#fff',
                 borderRadius: borderRadiusLG,
                 flex: 1,
                 overflow: 'auto',

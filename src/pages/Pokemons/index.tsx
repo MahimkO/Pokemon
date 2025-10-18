@@ -1,16 +1,19 @@
 import { Pagination } from 'antd';
 import { memo, useState, type FC } from 'react';
 
+import Loader from '../../components/Loader';
 import PokemonCard from '../../components/PokemonCard';
 import { usePokemons } from '../../hooks/usePokemons';
 
 const Pokemons: FC = () => {
   const [page, setPage] = useState(1);
   const limit = 6;
-  const { data } = usePokemons(page, limit);
+  const { data, isLoading } = usePokemons(page, limit);
   const { count, details } = data ?? { count: 0, details: [] };
 
-  return (
+  return isLoading ? (
+    <Loader />
+  ) : (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 20 }}>
         {details.length && details.map((pokemon) => <PokemonCard key={pokemon.name} pokemon={pokemon} />)}

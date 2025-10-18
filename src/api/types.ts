@@ -4,6 +4,9 @@ export type TPokemonFull = {
 };
 
 export type TPokemon = {
+  abilities: {
+    ability: { name: string };
+  }[];
   base_experience: number;
   height: number;
   id: number;
@@ -12,6 +15,10 @@ export type TPokemon = {
   sprites: {
     front_default: string;
   };
+  stats: {
+    base_stat: number;
+    stat: { name: string };
+  }[];
 };
 
 export type TPokemonShortInfo = {

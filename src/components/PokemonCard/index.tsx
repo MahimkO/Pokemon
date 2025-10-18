@@ -19,12 +19,16 @@ const PokemonCard: FC<TProps> = ({ pokemon, buttons }) => {
     navigate(`/pokemons/${pokemon.id}`);
   };
 
-  const cardDContent = [`Height: ${pokemon?.height}`, `Weight: ${pokemon?.weight}`, `Exp: ${pokemon?.base_experience}`];
+  const content = [
+    { key: 'height', node: `Height: ${pokemon?.height}` },
+    { key: 'weight', node: `Weight: ${pokemon?.weight}` },
+    { key: 'exp', node: `Exp: ${pokemon?.base_experience}` },
+  ];
 
   return (
     <div>
       <AntdCard
-        content={cardDContent}
+        content={content}
         imgSrc={pokemon?.sprites?.front_default}
         buttons={buttons}
         title={pokemon?.name && pokemon.name[0].toUpperCase() + pokemon.name.slice(1)}

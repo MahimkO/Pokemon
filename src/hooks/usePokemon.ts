@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { fetchPokemonById } from '../api/pokemons';
-import type { TPokemon } from '../api/pokemons';
+import type { TPokemon } from '../api/types';
 
 export const usePokemon = (id: number) => {
   return useQuery<TPokemon, Error>({

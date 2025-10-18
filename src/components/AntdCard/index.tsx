@@ -4,7 +4,7 @@ import type { FC, ReactNode } from 'react';
 type TProps = {
   alt?: string;
   buttons?: ReactNode[];
-  content: string[];
+  content: { key: string; node: string | ReactNode }[];
   draggable?: boolean;
   extra?: ReactNode;
   imgSrc?: string;
@@ -28,16 +28,17 @@ export const AntdCard: FC<TProps> = ({
     <Card
       actions={buttons}
       cover={
-        <img draggable={draggable} alt={alt} src={imgSrc} style={{ borderBottom: '1px solid rgb(240, 240, 240)' }} />
+        <img draggable={draggable} alt={alt} src={imgSrc} style={{ width: 250, height: 'auto', margin: '0 auto' }} />
       }
       extra={extra}
       size={size}
-      style={{ width }}
+      style={{ width, minWidth: 250 }}
+      styles={{ body: { borderTop: '1px solid rgb(240, 240, 240)' } }}
       title={title}
     >
-      {content.map((item, i) => (
-        <p key={item + i}>{item}</p>
-      ))}
+      {content.map(({ key, node }) =>
+        typeof node === 'string' ? <p key={key}>{node}</p> : <div key={key}>{node}</div>
+      )}
     </Card>
   );
 };
