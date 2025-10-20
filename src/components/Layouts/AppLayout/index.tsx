@@ -1,12 +1,14 @@
 import {
+  BulbOutlined,
   DownOutlined,
   EyeInvisibleOutlined,
   EyeTwoTone,
   HomeOutlined,
+  InfoCircleOutlined,
   LaptopOutlined,
   LoginOutlined,
   LogoutOutlined,
-  NotificationOutlined,
+  QuestionOutlined,
   SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons';
@@ -14,7 +16,7 @@ import type { MenuProps } from 'antd';
 import { Breadcrumb, Button, Dropdown, Input, Layout, Menu, Modal, Space, theme } from 'antd';
 import type { FC, JSX, ReactNode } from 'react';
 import { createElement, useState } from 'react';
-import { Link, matchRoutes, useLocation, useNavigate } from 'react-router-dom';
+import { Link, matchPath, matchRoutes, useLocation, useNavigate } from 'react-router-dom';
 import { routes } from '../../../routes';
 
 type TProps = {
@@ -22,24 +24,6 @@ type TProps = {
 };
 
 const { Content, Footer, Header, Sider } = Layout;
-
-// Sider элементы
-const siderItems: MenuProps['items'] = [UserOutlined, LaptopOutlined, NotificationOutlined].map((icon, index) => {
-  const key = String(index + 1);
-
-  return {
-    children: Array.from({ length: 4 }).map((_, j) => {
-      const subKey = index * 4 + j + 1;
-      return {
-        key: subKey,
-        label: `option${subKey}`,
-      };
-    }),
-    icon: createElement(icon),
-    key: `sub${key}`,
-    label: `subnav ${key}`,
-  };
-});
 
 // Profile элементы
 const items: MenuProps['items'] = [
@@ -78,6 +62,8 @@ export const AppLayout: FC<TProps> = ({ children }) => {
   } = theme.useToken();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const randomPokemonID = Math.floor(Math.random() * 1025);
 
   const showModal = () => {
     setIsOpen(true);
@@ -119,9 +105,48 @@ export const AppLayout: FC<TProps> = ({ children }) => {
       onClick: () => navigate('/pokemons'),
     },
     {
+      key: '/pokemons/:id',
+      label: 'Покемон',
+    },
+    {
       key: '/about',
       label: 'О проекте',
       onClick: () => navigate('/about'),
+    },
+  ];
+
+  // Sider элементы
+  const siderItems: MenuProps['items'] = [
+    {
+      icon: createElement(BulbOutlined),
+      key: '/news',
+      label: 'Новости',
+      children: [
+        {
+          icon: createElement(LaptopOutlined),
+          key: '/news-1',
+          label: `${new Date().toLocaleDateString()}`,
+        },
+      ],
+    },
+    {
+      icon: createElement(QuestionOutlined),
+      key: '/pokemons/:id',
+      label: 'Случайный покемон',
+      onClick: () => navigate(`/pokemons/${randomPokemonID}`),
+    },
+    {
+      icon: createElement(InfoCircleOutlined),
+      key: 'info',
+      label: 'Информация',
+      children: [
+        {
+          icon: createElement(LaptopOutlined),
+          key: '/technologies',
+          label: 'Технологии',
+          onClick: () => navigate('/technologies'),
+        },
+      ],
     },
   ];
 
@@ -173,11 +198,11 @@ export const AppLayout: FC<TProps> = ({ children }) => {
         >
           <img src="/images/pokemon.png" width="95" style={{ marginRight: '15px' }} />
           <Menu
-            theme="dark"
-            mode="horizontal"
-            selectedKeys={[location.pathname]}
             items={navBarItems}
+            mode="horizontal"
+            selectedKeys={[matchPath('/pokemons/:id', location.pathname) ? '/pokemons/:id' : location.pathname]}
             style={{ backgroundColor: '#b0bddaff', flex: 1, minWidth: 0 }}
+            theme="dark"
           />
           {isAuth ? (
             <Dropdown menu={{ items }}>
@@ -208,18 +233,19 @@ export const AppLayout: FC<TProps> = ({ children }) => {
               padding: '24px 0',
             }}
           >
-            <Sider style={{ background: colorBgContainer }} width={200}>
+            <Sider style={{ background: colorBgContainer }} width={230}>
               <Menu
-                mode="inline"
-                defaultSelectedKeys={['1']}
-                defaultOpenKeys={['sub1']}
-                style={{ height: '100%' }}
                 items={siderItems}
+                mode="inline"
+                defaultSelectedKeys={undefined}
+                defaultOpenKeys={undefined}
+                style={{ height: '100%' }}
               />
             </Sider>
 
             <Content
               style={{
+                position: 'relative',
                 borderRadius: borderRadiusLG,
                 flex: 1,
                 overflow: 'auto',

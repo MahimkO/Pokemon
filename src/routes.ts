@@ -22,4 +22,11 @@ export const routes = [
     path: '/about',
     breadcrumb: 'О проекте',
   },
+
+  // Технологии
+  {
+    element: lazy(() => import('./pages/Technologies')),
+    path: '/technologies',
+    breadcrumb: 'Технологии',
+  },
 ];

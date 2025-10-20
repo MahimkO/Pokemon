@@ -2,7 +2,7 @@ import axios from 'axios';
 import { api } from './client';
 import type { TPokemon, TPokemonFull, TPokemonShortInfo } from './types';
 
-// GET-запрос нескольких покемонов (по умолчанию 10)
+// Получить несколько покемонов
 export const fetchPokemons = async (page: number, limit: number = 10): Promise<TPokemonFull> => {
   const offset = (page - 1) * limit;
 
@@ -22,7 +22,7 @@ export const fetchPokemons = async (page: number, limit: number = 10): Promise<T
   return { count: listRes.data.count, details };
 };
 
-// GET-запрос одного покемона по ID
+// Получить одного покемона по ID
 export const fetchPokemonById = async (id: number): Promise<TPokemon> => {
   const { data } = await api.get<TPokemon>(`/pokemon/${id}`);
 

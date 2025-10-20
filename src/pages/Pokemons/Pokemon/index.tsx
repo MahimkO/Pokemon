@@ -1,21 +1,24 @@
 import { ArrowLeftOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { Button, Divider, Popover } from 'antd';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { AntdCard } from '../../../components/AntdCard';
 import { usePokemon } from '../../../hooks/usePokemon';
 
 import type { FC } from 'react';
+import Loader from '../../../components/Loader';
 
 const popoverText = <p>Нажмите, если хотите вернуться на страницу с покемонами</p>;
 
 const Pokemon: FC = () => {
+  const [isImageLoaded, setIsImageLoaded] = useState<boolean>(false);
   const { id } = useParams<{ id: string }>();
-  const { data: pokemon, error, isError } = usePokemon(+id!);
+  const { data: pokemon, error, isError, isLoading, isFetching } = usePokemon(+id!);
   const navigate = useNavigate();
 
   if (isError) return <p>Ошибка: {error.message}</p>;
+  if (isLoading || isFetching) return <Loader />;
 
   const goToPreviousPage = () => {
     navigate(`/pokemons/${+id! - 1}`);
@@ -53,6 +56,7 @@ const Pokemon: FC = () => {
 
   return (
     <div>
+      {!isImageLoaded && <Loader />}
       <AntdCard
         content={content}
         imgSrc={pokemon?.sprites?.front_default}
@@ -64,6 +68,7 @@ const Pokemon: FC = () => {
             <Button onClick={goToPokemonsPage} icon={<ArrowLeftOutlined />} />
           </Popover>
         }
+        setIsImageLoaded={setIsImageLoaded}
       />
     </div>
   );

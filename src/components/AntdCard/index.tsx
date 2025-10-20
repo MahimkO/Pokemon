@@ -1,5 +1,5 @@
 import { Card } from 'antd';
-import type { FC, ReactNode } from 'react';
+import { type FC, type ReactNode } from 'react';
 
 type TProps = {
   alt?: string;
@@ -11,6 +11,7 @@ type TProps = {
   size?: 'default' | 'small';
   title?: string;
   width?: number | string;
+  setIsImageLoaded: (value: boolean) => void;
 };
 
 export const AntdCard: FC<TProps> = ({
@@ -23,12 +24,20 @@ export const AntdCard: FC<TProps> = ({
   size = 'default',
   title,
   width = 250,
+  setIsImageLoaded,
 }) => {
   return (
     <Card
       actions={buttons}
       cover={
-        <img draggable={draggable} alt={alt} src={imgSrc} style={{ width: 250, height: 'auto', margin: '0 auto' }} />
+        <img
+          onLoad={() => setIsImageLoaded(true)}
+          loading="lazy"
+          draggable={draggable}
+          alt={alt}
+          src={imgSrc}
+          style={{ width: 250, height: 'auto', margin: '0 auto' }}
+        />
       }
       extra={extra}
       size={size}
