@@ -12,45 +12,21 @@ import {
   SettingOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
-import { Breadcrumb, Button, Dropdown, Input, Layout, Menu, Modal, Space, theme } from 'antd';
+import type { CheckboxProps, MenuProps, NotificationArgsProps } from 'antd';
+import { Breadcrumb, Button, Checkbox, Dropdown, Input, Layout, Menu, Modal, notification, Space, theme } from 'antd';
 import type { FC, JSX, ReactNode } from 'react';
 import { createElement, useEffect, useState } from 'react';
 import { Link, matchPath, matchRoutes, useLocation, useNavigate } from 'react-router-dom';
 import { routes } from '../../../routes';
 
 type MenuItem = Required<MenuProps>['items'][number];
+type NotificationType = 'success' | 'info' | 'warning' | 'error';
+type NotificationPlacement = NotificationArgsProps['placement'];
 type TProps = {
   children: ReactNode;
 };
 
 const { Content, Footer, Header, Sider } = Layout;
-
-// Profile элементы
-const items: MenuProps['items'] = [
-  {
-    extra: '⌘P',
-    icon: <UserOutlined />,
-    key: '1',
-    label: 'Профиль',
-  },
-  {
-    extra: '⌘S',
-    icon: <SettingOutlined />,
-    key: '2',
-    label: 'Настройки',
-  },
-  {
-    type: 'divider',
-  },
-  {
-    extra: '⌘E',
-    icon: <LogoutOutlined />,
-    key: '3',
-    label: 'Выйти',
-    onClick: () => console.log('Вы успешно вышли'),
-  },
-];
 
 export const AppLayout: FC<TProps> = ({ children }) => {
   const [isAuth, setIsAuth] = useState<boolean>(false);
@@ -59,6 +35,7 @@ export const AppLayout: FC<TProps> = ({ children }) => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [openKeys, setOpenKeys] = useState<string[]>([]);
+  const [api, contextHolder] = notification.useNotification();
   const {
     token: { borderRadiusLG, colorBgContainer },
   } = theme.useToken();
@@ -67,18 +44,32 @@ export const AppLayout: FC<TProps> = ({ children }) => {
 
   const randomPokemonID = Math.floor(Math.random() * 1025);
 
+  const openNotificationWithIcon = (
+    type: NotificationType,
+    placement: NotificationPlacement = 'bottomRight',
+    pauseOnHover: boolean = true
+  ) => {
+    api[type]({
+      message: type[0].toUpperCase() + type.slice(1),
+      description: 'Вы успешно авторизовались!',
+      placement,
+      showProgress: true,
+      pauseOnHover,
+    });
+  };
+
   const showModal = () => {
     setIsOpen(true);
   };
 
-  const handleOk = () => {
+  const handleOkAuth = () => {
     setConfirmLoading(true);
     setTimeout(() => {
       if (username.toLowerCase() === 'admin' && password === 'admin') {
-        console.log('Hello, admin!');
         setIsAuth(true);
         setIsOpen(false);
         setConfirmLoading(false);
+        openNotificationWithIcon('success');
       } else {
         // TODO Добавить выплывающее уведомление или добавить валидацию,
         //  что авторизация не пройдена
@@ -88,7 +79,7 @@ export const AppLayout: FC<TProps> = ({ children }) => {
     }, 2000);
   };
 
-  const handleCancel = () => {
+  const handleCancelAuth = () => {
     setUsername('');
     setPassword('');
     setIsOpen(false);
@@ -97,6 +88,16 @@ export const AppLayout: FC<TProps> = ({ children }) => {
   const handleOpenChange: MenuProps['onOpenChange'] = (keys) => {
     // чтобы меню можно было сворачивать при клике
     setOpenKeys(keys);
+  };
+
+  const handleLogout = () => {
+    setIsAuth(false);
+    setUsername('');
+    setPassword('');
+  };
+
+  const onChangeCheckbox: CheckboxProps['onChange'] = (e) => {
+    console.log(`checked = ${e.target.checked}`);
   };
 
   // Menu элементы
@@ -154,6 +155,32 @@ export const AppLayout: FC<TProps> = ({ children }) => {
           onClick: () => navigate('/technologies'),
         },
       ],
+    },
+  ];
+
+  // Profile элементы
+  const items: MenuProps['items'] = [
+    {
+      extra: '⌘P',
+      icon: <UserOutlined />,
+      key: '1',
+      label: 'Профиль',
+    },
+    {
+      extra: '⌘S',
+      icon: <SettingOutlined />,
+      key: '2',
+      label: 'Настройки',
+    },
+    {
+      type: 'divider',
+    },
+    {
+      extra: '⌘E',
+      icon: <LogoutOutlined />,
+      key: '3',
+      label: 'Выйти',
+      onClick: handleLogout,
     },
   ];
 
@@ -217,6 +244,7 @@ export const AppLayout: FC<TProps> = ({ children }) => {
 
   return (
     <>
+      {contextHolder}
       <Layout style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         <Header
           style={{
@@ -300,29 +328,32 @@ export const AppLayout: FC<TProps> = ({ children }) => {
       <Modal
         title="Авторизация"
         open={isOpen}
-        onOk={handleOk}
+        onOk={handleOkAuth}
         confirmLoading={confirmLoading}
-        onCancel={handleCancel}
+        onCancel={handleCancelAuth}
         cancelText="Отмена"
         okText="Авторизоваться"
       >
         <Space direction="vertical" style={{ width: '100%' }}>
           <p>Заполните поля ниже, чтобы авторизоваться</p>
           <Input
-            placeholder="Введите имя пользователя"
+            placeholder="Введите имя пользователя (admin)"
             status={username.length > 3 ? '' : 'error'}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
           <Input.Password
-            placeholder="Введите пароль"
+            placeholder="Введите пароль (admin)"
             status={password.length > 4 ? '' : 'error'}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            onPressEnter={() => console.log('Pressed ENTER')}
+            onPressEnter={handleOkAuth}
             iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
             style={{ margin: '12px 0' }}
           />
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
+            <Checkbox onChange={onChangeCheckbox}>Запомнить меня</Checkbox>
+          </div>
         </Space>
       </Modal>
     </>
