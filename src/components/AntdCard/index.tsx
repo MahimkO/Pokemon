@@ -11,7 +11,7 @@ type TProps = {
   size?: 'default' | 'small';
   title?: string;
   width?: number | string;
-  setIsImageLoaded: (value: boolean) => void;
+  setIsImageLoaded?: (value: boolean) => void | undefined;
 };
 
 export const AntdCard: FC<TProps> = ({
@@ -31,7 +31,7 @@ export const AntdCard: FC<TProps> = ({
       actions={buttons}
       cover={
         <img
-          onLoad={() => setIsImageLoaded(true)}
+          onLoad={setIsImageLoaded ? () => setIsImageLoaded(true) : undefined}
           loading="lazy"
           draggable={draggable}
           alt={alt}

@@ -15,10 +15,11 @@ import {
 import type { MenuProps } from 'antd';
 import { Breadcrumb, Button, Dropdown, Input, Layout, Menu, Modal, Space, theme } from 'antd';
 import type { FC, JSX, ReactNode } from 'react';
-import { createElement, useState } from 'react';
+import { createElement, useEffect, useState } from 'react';
 import { Link, matchPath, matchRoutes, useLocation, useNavigate } from 'react-router-dom';
 import { routes } from '../../../routes';
 
+type MenuItem = Required<MenuProps>['items'][number];
 type TProps = {
   children: ReactNode;
 };
@@ -57,6 +58,7 @@ export const AppLayout: FC<TProps> = ({ children }) => {
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
   const {
     token: { borderRadiusLG, colorBgContainer },
   } = theme.useToken();
@@ -90,6 +92,11 @@ export const AppLayout: FC<TProps> = ({ children }) => {
     setUsername('');
     setPassword('');
     setIsOpen(false);
+  };
+
+  const handleOpenChange: MenuProps['onOpenChange'] = (keys) => {
+    // чтобы меню можно было сворачивать при клике
+    setOpenKeys(keys);
   };
 
   // Menu элементы
@@ -137,7 +144,7 @@ export const AppLayout: FC<TProps> = ({ children }) => {
     },
     {
       icon: createElement(InfoCircleOutlined),
-      key: 'info',
+      key: '/info',
       label: 'Информация',
       children: [
         {
@@ -149,6 +156,23 @@ export const AppLayout: FC<TProps> = ({ children }) => {
       ],
     },
   ];
+
+  // Для подсветки пункта подменю в меню боковой панели ("Информация" -> "Технологии")
+  const findParentKey = (items: MenuItem[] | undefined, key: string): string | null => {
+    if (!items) return null;
+
+    for (const item of items) {
+      if (!item) continue; // защищаемся от null / undefined
+
+      if ('children' in item && item.children) {
+        if (item.children.some((child) => child && child.key === key)) {
+          return item.key as string;
+        }
+      }
+    }
+
+    return null;
+  };
 
   // matchRoutes возвращает массив совпавших маршрутов
   const matches = matchRoutes(routes, location);
@@ -185,6 +209,11 @@ export const AppLayout: FC<TProps> = ({ children }) => {
           .filter((item): item is { title: string | JSX.Element } => item !== null)
       : []),
   ];
+
+  useEffect(() => {
+    const parentKey = findParentKey(siderItems, location.pathname);
+    if (parentKey) setOpenKeys([parentKey]);
+  }, [location.pathname]);
 
   return (
     <>
@@ -237,8 +266,9 @@ export const AppLayout: FC<TProps> = ({ children }) => {
               <Menu
                 items={siderItems}
                 mode="inline"
-                defaultSelectedKeys={undefined}
-                defaultOpenKeys={undefined}
+                onOpenChange={handleOpenChange}
+                openKeys={openKeys}
+                selectedKeys={[location.pathname]}
                 style={{ height: '100%' }}
               />
             </Sider>

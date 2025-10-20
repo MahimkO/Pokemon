@@ -33,7 +33,7 @@ const Pokemon: FC = () => {
   };
 
   const buttons = [
-    <Button onClick={goToPreviousPage} icon={<ArrowLeftOutlined />}>
+    <Button disabled={+id! <= 1 ? true : false} onClick={goToPreviousPage} icon={<ArrowLeftOutlined />}>
       Назад
     </Button>,
     <Button onClick={goToNextPage} icon={<ArrowRightOutlined />} iconPosition={'end'}>
