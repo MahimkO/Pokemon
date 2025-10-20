@@ -20,13 +20,13 @@ const Technologies = () => {
       </p>
       <p>
         Версия @tanstack/react-query: <strong>{__TANSTACK_REACT_QUERY_VERSION__}</strong>
-      </p>{' '}
+      </p>
       <p>
         Версия AntD: <strong>{__ANTD_VERSION__}</strong>
-      </p>{' '}
+      </p>
       <p>
         Версия ESLint: <strong>{__ESLINT_VERSION__}</strong>
-      </p>{' '}
+      </p>
       <p>
         Версия TypeScript: <strong>{__TYPESCRIPT_VERSION__}</strong>
       </p>
