@@ -3,7 +3,7 @@ import { Button, Divider, Popover } from 'antd';
 import { memo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { AntdCard } from '../../../components/AntdCard';
+import { Card } from '../../../components/Card';
 import { usePokemon } from '../../../hooks/usePokemon';
 
 import type { FC } from 'react';
@@ -57,7 +57,7 @@ const Pokemon: FC = () => {
   return (
     <div>
       {!isImageLoaded && <Loader />}
-      <AntdCard
+      <Card
         content={content}
         imgSrc={pokemon?.sprites?.front_default}
         buttons={buttons}

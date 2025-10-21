@@ -18,6 +18,7 @@ import type { FC, JSX, ReactNode } from 'react';
 import { createElement, useEffect, useState } from 'react';
 import { Link, matchPath, matchRoutes, useLocation, useNavigate } from 'react-router-dom';
 import { routes } from '../../../routes';
+import { Modal as Modal2 } from '../../Modal';
 
 type MenuItem = Required<MenuProps>['items'][number];
 type NotificationType = 'success' | 'info' | 'warning' | 'error';
@@ -27,10 +28,23 @@ type TProps = {
 };
 
 const { Content, Footer, Header, Sider } = Layout;
+const notificationTypes = {
+  success: 'Успешно!',
+  error: 'Ошибка!',
+  warning: 'Внимание!',
+  info: 'Информация',
+};
+const notificationRegistrationDescriptions = {
+  success: 'Вы успешно авторизовались!',
+  error: 'Вам не удалось авторизоваться!',
+  warning: 'Внимание!',
+  info: 'Информация',
+};
 
 export const AppLayout: FC<TProps> = ({ children }) => {
   const [isAuth, setIsAuth] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpenModal2, setIsOpenModal2] = useState<boolean>(false);
   const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -50,8 +64,8 @@ export const AppLayout: FC<TProps> = ({ children }) => {
     pauseOnHover: boolean = true
   ) => {
     api[type]({
-      message: type[0].toUpperCase() + type.slice(1),
-      description: 'Вы успешно авторизовались!',
+      message: notificationTypes[type],
+      description: notificationRegistrationDescriptions[type],
       placement,
       showProgress: true,
       pauseOnHover,
@@ -71,10 +85,8 @@ export const AppLayout: FC<TProps> = ({ children }) => {
         setConfirmLoading(false);
         openNotificationWithIcon('success');
       } else {
-        // TODO Добавить выплывающее уведомление или добавить валидацию,
-        //  что авторизация не пройдена
-        console.log('Авторизация не пройдена');
         setConfirmLoading(false);
+        openNotificationWithIcon('error');
       }
     }, 2000);
   };
@@ -85,7 +97,7 @@ export const AppLayout: FC<TProps> = ({ children }) => {
     setIsOpen(false);
   };
 
-  const handleOpenChange: MenuProps['onOpenChange'] = (keys) => {
+  const handleOpenSiderSubmenu: MenuProps['onOpenChange'] = (keys) => {
     // чтобы меню можно было сворачивать при клике
     setOpenKeys(keys);
   };
@@ -271,9 +283,14 @@ export const AppLayout: FC<TProps> = ({ children }) => {
               </a>
             </Dropdown>
           ) : (
-            <Button type="primary" onClick={showModal} icon={<LoginOutlined />}>
-              Войти
-            </Button>
+            <>
+              <Button type="link" onClick={() => setIsOpenModal2(true)}>
+                Регистрация
+              </Button>
+              <Button type="primary" onClick={showModal} icon={<LoginOutlined />}>
+                Войти
+              </Button>
+            </>
           )}
         </Header>
 
@@ -294,7 +311,7 @@ export const AppLayout: FC<TProps> = ({ children }) => {
               <Menu
                 items={siderItems}
                 mode="inline"
-                onOpenChange={handleOpenChange}
+                onOpenChange={handleOpenSiderSubmenu}
                 openKeys={openKeys}
                 selectedKeys={[location.pathname]}
                 style={{ height: '100%' }}
@@ -351,11 +368,14 @@ export const AppLayout: FC<TProps> = ({ children }) => {
             iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
             style={{ margin: '12px 0' }}
           />
-          <div style={{ width: '100%', display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Button type="link">Забыли пароль?</Button>
             <Checkbox onChange={onChangeCheckbox}>Запомнить меня</Checkbox>
           </div>
         </Space>
       </Modal>
+
+      <Modal2 title="Регистрация" isOpen={isOpenModal2} handleOk={() => setIsOpenModal2(false)} />
     </>
   );
 };

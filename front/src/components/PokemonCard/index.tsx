@@ -3,7 +3,7 @@ import { Button, Popover } from 'antd';
 import { memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AntdCard } from '../AntdCard';
+import { Card } from '../Card';
 
 import type { FC, ReactNode } from 'react';
 import type { TPokemon } from '../../api/types';
@@ -26,19 +26,17 @@ const PokemonCard: FC<TProps> = ({ pokemon, buttons }) => {
   ];
 
   return (
-    <div>
-      <AntdCard
-        content={content}
-        imgSrc={pokemon?.sprites?.front_default}
-        buttons={buttons}
-        title={pokemon?.name && pokemon.name[0].toUpperCase() + pokemon.name.slice(1)}
-        extra={
-          <Popover content={popoverText} title="Больше">
-            <Button onClick={goToDetailedPage} icon={<EllipsisOutlined />} />
-          </Popover>
-        }
-      />
-    </div>
+    <Card
+      content={content}
+      imgSrc={pokemon?.sprites?.front_default}
+      buttons={buttons}
+      title={pokemon?.name && pokemon.name[0].toUpperCase() + pokemon.name.slice(1)}
+      extra={
+        <Popover content={popoverText} title="Больше">
+          <Button onClick={goToDetailedPage} icon={<EllipsisOutlined />} />
+        </Popover>
+      }
+    />
   );
 };
 
