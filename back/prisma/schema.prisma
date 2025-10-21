@@ -1,0 +1,27 @@
+// 1. Подключение к базе
+datasource db {
+  provider = "postgresql"          // указываем тип БД (postgres)
+  url      = env("DATABASE_URL")   // берём из .env
+}
+
+// 2. Генератор Prisma Client
+generator client {
+  provider = "prisma-client-js"
+}
+
+// 3. Модели
+model User {
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  password     String
+  role         Role     @default(USER)
+  refreshToken String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// 4. Enum ролей
+enum Role {
+  USER
+  ADMIN
+}
